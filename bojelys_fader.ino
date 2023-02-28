@@ -12,14 +12,23 @@
 #define DOWN 3
 
 
+
+#define FADETIME 2000
+#define FPS 10
+#define DELAY 1000/fps
+#define FADESTEP 255/FADESTEP-DELAY
+#define MIN_PERIOD 2000
+#define MAX_PERIOD 15000
+#define FLEX_PERIOD MAX_PERIOD-MIN_PERIOD
+
+
 CRGB leds[NUM_LEDS];
 int delays [NUM_PROGS]; //for every program, counter to figure out when to do something next time.
 int progs [NUM_PROGS];  //Current led that each program is interacting with 
-int states [NUM_PROGS];
-int hues [NUM_PROGS];
+char states [NUM_PROGS];
+char hues [NUM_PROGS];
 
 CRGB colors[]= {CRGB::Red,CRGB::Green,CRGB::Blue, CRGB::Yellow,CRGB::Purple,CRGB::White};
-
 
 void setup() { 
   FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);  
@@ -35,14 +44,14 @@ bool isPartOf(int led){
 }
 void loop() { 
   for(int i =0; i<NUM_PROGS;i++){
-    delays[i]= delays[i]-1;
+    delays[i]-=DELAY;
     if(states[i]==UP){
-      if(hues[i]>255-10){
+      if(hues[i]>255-FADESTEP){
         leds[progs[i]].maximizeBrightness(255);;
         states[i]=ON;
-        delays[i]= 4+random(15); // set random delay until it is turned off
+        delays[i]= MIN_PERIOD + random(FLEX_PERIOD); // set random delay until it is turned off
       }else{
-        hues[i]+=10;
+        hues[i]+=FADESTEP;
         leds[progs[i]].maximizeBrightness(hues[i])
       }  
     } else if(states[i]==DOWN){
@@ -51,9 +60,9 @@ void loop() {
         leds[progs[i]]=CRGB::Black;
         progs[i]= NUM_LEDS + 1;
         states[i]=OFF;
-        delays[i]= 4+random(15); // set random delay until it is turned on
+        delays[i]= MIN_PERIOD+random(FLEX_PERIOD); // set random delay until it is turned on
       } else {
-        hues[i]-=10;
+        hues[i]-=FADESTEP;
         leds[progs[i]].maximizeBrightness(hues[i])
 
       }
@@ -65,16 +74,15 @@ void loop() {
        }else{
         int nxtled = random(NUM_LEDS); //pick a random next LED
         if(!isPartOf(nxtled)){ // if not already active
-           states[i]=UP;
-       
+          states[i]=UP;
           progs[i] = nxtled; //store led number in program
           leds[progs[i]]=colors[random(NUM_COLORS)]; //set random color
-          leds[progs[i]].maximizeBrightness(hues[i]);
-          delays[i]= 4+random(15); // set random delay until it is turned off
+          hues[i]=0;
+          leds[progs[i]].maximizeBrightness(0);
         }
       } 
     }  
   }
   FastLED.show();
-  delay(500);
+  delay(DELAY);
 }
