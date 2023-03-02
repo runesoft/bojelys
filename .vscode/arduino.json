@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:uno",
+    "port": "/dev/tty.usbmodem1201",
+    "programmer": "arduinoasispatmega32u4",
+    "sketch": "bojelys.ino"
+}
