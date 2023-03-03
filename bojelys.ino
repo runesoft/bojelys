@@ -5,6 +5,8 @@
 
 #define NUM_COLORS 3 //number of colors to use
 #define FPS 60
+#define LOOPTIME 5.0
+#define INCREMENT (2*PI)/(FPS*LOOPTIME)
 #define DELAY 1000/FPS
 #define WINDOW 10.34
 #define LPS 10.0
@@ -18,6 +20,7 @@ void setup() {
   FastLED.addLeds<WS2811, DATA_PIN, GRB>(leds, NUM_LEDS);
 }
 
+float loopp=0;
 float current=-WINDOW;
 CRGB color=CRGB::Red;
 
@@ -27,12 +30,16 @@ void loop() {
       leds[i]=CRGB::Black;
     } else {
       leds[i]=color;
-      leds[i].maximizeBrightness((cos(3.14+(3.14*2)*(i-current) /WINDOW)+1)*127);
+      leds[i].maximizeBrightness((cos(PI+(PI*2)*(i-current) /WINDOW)+1)*127);
     }
   }
-  current+=INCREASE;
-  if(current>NUM_LEDS){
-    current=-WINDOW;
+  //current+=INCREASE;
+  loopp+=INCREMENT;
+  current=(cos(loopp)+1)/2*(NUM_LEDS-WINDOW);
+
+  if(loopp>PI){
+    loopp-=2*PI;
+    //current=-WINDOW;
     color=colors[random(6)];
   }
   FastLED.show();
