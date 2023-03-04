@@ -5,11 +5,11 @@
 
 #define NUM_COLORS 3 //number of colors to use
 #define FPS 60
-#define LOOPTIME 5.0
+#define LOOPTIME 10.0
 #define INCREMENT (2*PI)/(FPS*LOOPTIME)
 #define DELAY 1000/FPS
 #define WINDOW 10.34
-#define LPS 10.0
+#define LPS 20.0
 #define INCREASE LPS/FPS
 
 CRGB leds[NUM_LEDS];
